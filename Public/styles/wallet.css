@@ -1,0 +1,58 @@
+body{
+    background-color: #f2f2f2;
+}
+
+img.tiny-logo{
+    height: 80px;
+    width: 160px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.login-box{
+    margin-top: 120px;
+}
+
+.navbar-gpay{
+    background-color: #3276b1;
+    color: #ffffff;
+    border: none;
+}
+
+.navbar-gpay a {
+    color: #ffffff;
+}
+
+.navbar-gpay .nav > li > a:hover,.navbar-gpay .nav > li > a:focus{
+    background-color: #43bcf0;
+    text-decoration: none;
+}
+
+.navbar-brand{
+    padding: 1px !important;
+}
+
+
+.navbar-gpay-merchant{
+    background-color: #f26522;
+    color: #ffffff;
+    border: none;
+}
+.navbar-gpay-merchant a {
+    color: #ffffff;
+}
+
+.navbar-gpay-merchant .nav > li > a:hover,.navbar-gpay .nav > li > a:focus{
+    background-color: #ff9715;
+    text-decoration: none;
+}
+
+.btn.btn-primary{
+    background-color: #34335e;
+    border: none;
+}
+
+.btn.btn-info{
+    background-color: #34335e;
+    border: none;
+}

@@ -1,0 +1,37 @@
+{
+    "name": "GpayAfrica Wallet APi",
+    "type": "library",
+    "description": "Gpay Africa Lib",
+    "authors": [
+        {
+            "name": "Akachukwu Okafor",
+            "email": "kasoprecede47@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "slim/slim": "2.4.3",
+        "mandrill/mandrill": "1.0.54",
+        "nesbot/Carbon": "*",
+        "guzzlehttp/guzzle": "5.0.3"
+    },
+    "autoload": {
+        "files": [
+            "App/Libs/recaptchalib.php",
+            "App/Libs/mailer.php",
+            "App/Libs/php-activerecord/ActiveRecord.php",
+            "App/Config/database.php",
+            "App/Bootstrap/DatabaseSetup.php",
+            "App/Bootstrap/MiddleWare.php",
+            "App/Utils/Utils.php",
+            "App/Utils/helpers.php"
+        ],
+        "classmap": [
+            "App/Models",
+            "Controllers"
+        ]
+    },
+    "suggest": {
+        "ext-mcrypt": "Required for HTTP cookie encryption"
+    }
+}
