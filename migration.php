@@ -14,7 +14,7 @@
     // Name of the file
     $filename = 'gpay_wallet.sql';
     // MySQL host
-    $mysql_host = 'localhost';
+    $mysql_host = '54.172.215.83';
     // MySQL username
     $mysql_username = $username;
     // MySQL password
