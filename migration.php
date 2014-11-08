@@ -23,9 +23,9 @@
     $mysql_database = $db;
 
     // Connect to MySQL server
-    mysql_connect($mysql_host, $mysql_username, $mysql_password) or die('Error connecting to MySQL server: ' . mysql_error());
+    $link = mysqli_connect($mysql_host, $mysql_username, $mysql_password) or die('Error connecting to MySQL server: ' . mysql_error());
     // Select database
-    mysql_select_db($mysql_database) or die('Error selecting MySQL database: ' . mysql_error());
+    mysqli_select_db($link,$mysql_database) or die('Error selecting MySQL database: ' . mysql_error());
 
 // Temporary variable, used to store current query
     $templine = '';
@@ -42,7 +42,7 @@
 // If it has a semicolon at the end, it's the end of the query
         if (substr(trim($line), -1, 1) == ';') {
             // Perform the query
-            mysql_query($templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error() . '<br /><br />');
+            mysqli_query($link,$templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error() . '<br /><br />');
             // Reset temp variable to empty
             $templine = '';
         }
