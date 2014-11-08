@@ -3,6 +3,7 @@
     require 'vendor/autoload.php';
 
     $mode = isset($_ENV['production']) ? 'production' : 'development';
+
     $app = new \Slim\Slim(array(
         'mode' => $mode
     ));
