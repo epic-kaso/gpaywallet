@@ -7,15 +7,10 @@
      */
     require 'vendor/autoload.php';
 
-    if (!isset($_ENV['production'])) {
-        $username = DB::username;
-        $password = DB::password;
-        $db = DB::database;
-    } else {
-        $username = DB_REMOTE::username;
-        $password = DB_REMOTE::password;
-        $db = DB_REMOTE::database;
-    }
+    $username = DB_REMOTE::username;
+    $password = DB_REMOTE::password;
+    $db = DB_REMOTE::database;
+
     // Name of the file
     $filename = 'gpay_wallet.sql';
     // MySQL host
