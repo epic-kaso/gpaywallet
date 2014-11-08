@@ -6,9 +6,17 @@
  * Time: 12:54 PM
  */
     try{
-        $username = DB::username;
-        $password = DB::password;
-        $db = DB::database;
+
+        if(!isset($_ENV['production'])){
+            $username = DB::username;
+            $password = DB::password;
+            $db = DB::database;
+        }else{
+            $username = DB_REMOTE::username;
+            $password = DB_REMOTE::password;
+            $db = DB_REMOTE::database;
+        }
+
 
         $cfg = ActiveRecord\Config::instance();
         $cfg->set_model_directory(DB::model_directory);
