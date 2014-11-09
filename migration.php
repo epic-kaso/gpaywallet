@@ -7,7 +7,7 @@
      */
     require 'vendor/autoload.php';
 
-    if(!isset($_ENV['production'])){
+    if(!isset($_ENV['production']) && !isset($_SERVER['production'])){
         $username = DB::username;
         $password = DB::password;
         $db = DB::database;
