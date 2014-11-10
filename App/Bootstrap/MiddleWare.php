@@ -69,6 +69,29 @@
             }
         }
 
+        public static function isMerchantProfileComplete()
+        {
+            if (!isset($_SESSION[MerchantController::$merchant_id_session])) {
+                $app = \Slim\Slim::getInstance();
+                $app->flash('error', 'Login required');
+                $app->redirect('/api/v1/merchant/login');
+            }
+
+            $user = $_SESSION[MerchantController::$merchant_id_session];
+            if (empty($user)) {
+                $app = \Slim\Slim::getInstance();
+                $app->flash('error', 'Login required');
+                $app->redirect('/api/v1/merchant/login');
+            } else {
+                $m_user = Merchant::find($user);
+                if (!$m_user->is_profile_complete) {
+                    $app = \Slim\Slim::getInstance();
+                    $app->flash('error', 'Please Complete your Profile');
+                    $app->redirect('/api/v1/merchant/profile/edit');
+                }
+            }
+        }
+
 
         public static function user_id()
         {

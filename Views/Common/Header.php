@@ -5,11 +5,12 @@
             <img src="/Public/images/logo.png" class="navbar-brand" />
         </div>
         <ul class="nav navbar-nav">
-            <li><a href="/api/v1/user/wallet/balance">BALANCE -  N 0.00</a></li>
+            <li><a href="/api/v1/user/wallet/balance">WALLET BALANCE</a></li>
             <li><a href="/api/v1/user/wallet/history">TRANSACTION HISTORY</a></li>
             <li><a href="/api/v1/user/wallet/fund">FUND WALLET</a></li>
             <li><a href="/api/v1/user/wallet/apps">APPS</a></li>
         </ul>
+
 
         <ul class="nav navbar-nav pull-right">
             <li><a href="/api/v1/user/profile">PROFILE</a></li>

@@ -8,7 +8,6 @@
 
 class MemberController {
 
-
     public static $user_id_session = 'current_user_id';
 
     public static function
@@ -16,15 +15,27 @@ class MemberController {
 
         $app->group('/user', function () use ($app, $authenticateUser, $guestUser) {
 
-            $app->group('/wallet',  function () use ($app, $authenticateUser) {
+            $app->group('/wallet', $authenticateUser, function () use ($app, $authenticateUser) {
 
                 $app->post('/transaction', function () use ($app) {
                 });
 
                 $app->get('/balance', function () use ($app) {
+                    $user_id = static::user_id();
+                    $user = User::first($user_id);
+
+                    $history = History::find('all', array(
+                            'conditions' => array('user_id = ?', $user_id),
+                            'limit'      => '10')
+                    );
+
                     $app->render('Common/Header.php');
-                    $app->render('Wallet/Balance.php');
+                    $app->render('Wallet/Balance.php', array(
+                        'user'    => $user,
+                        'history' => $history
+                    ));
                     $app->render('Common/Footer.php');
+
                 })->name('wallet_balance');
 
                 $app->get('/fund', function () use ($app) {
@@ -48,16 +59,40 @@ class MemberController {
                 })->name('fund_failure_url');
 
                 $app->get('/history', function () use ($app) {
+                    $user_id = static::user_id();
+                    $user = User::first($user_id);
+
+                    $history = History::find('all', array(
+                            'conditions' => array('user_id = ?', $user_id))
+                    );
+
                     $app->render('Common/Header.php');
-                    $app->render('Wallet/History.php');
+                    $app->render('Wallet/History.php', array(
+                        'user'    => $user,
+                        'history' => $history
+                    ));
                     $app->render('Common/Footer.php');
                 });
 
                 $app->get('/apps', function () use ($app) {
+                    $user_id = static::user_id();
+                    $user = User::first($user_id);
+
+                    $walletapps = UserWalletApp::find('all', array(
+                            'conditions' => array('user_id = ?', $user_id))
+                    );
+
                     $app->render('Common/Header.php');
-                    $app->render('Wallet/WalletApps.php');
+                    $app->render('Wallet/WalletApps.php', array('user' => $user, 'walletapps' => $walletapps));
                     $app->render('Common/Footer.php');
-                });
+                })->name('user_apps');
+
+                $app->post('/apps/modify/:id', function ($id) use ($app) {
+                    $walletapps = UserWalletApp::find_by_id($id);
+                    $walletapps->authorized = !$walletapps->authorized;
+                    $walletapps->save();
+                    $app->redirect($app->urlFor('user_apps'));
+                })->conditions(array('id' => '[0-9]+'));
 
                 $app->post('/apps/:id', function ($id) use ($app) {
 
@@ -100,20 +135,44 @@ class MemberController {
                 }
             });
 
-            $app->get('/profile',function () use ($app) {
+            $app->get('/profile', $authenticateUser, function () use ($app) {
+                $user_id = static::user_id();
+                $user = User::first($user_id);
+
                 $app->render('Common/Header.php');
-                $app->render('User/Profile-View.php');
+                $app->render('User/Profile-View.php', array('user' => $user));
                 $app->render('Common/Footer.php');
-            });
+            })->name('profile_page');
 
-            $app->get('/profile/edit',function () use ($app) {
+            $app->get('/profile/edit', $authenticateUser, function () use ($app) {
+                $user_id = static::user_id();
+                $user = User::first($user_id);
+
                 $app->render('Common/Header.php');
-                $app->render('User/Profile-Edit.php');
+                $app->render('User/Profile-Edit.php', array('user' => $user));
                 $app->render('Common/Footer.php');
-            });
+            })->name('profile_update_page');
 
-            $app->post('/profile/edit', function () use ($app) {
+            $app->post('/profile/edit', $authenticateUser, function () use ($app) {
+                $user_id = static::user_id();
+                $password = trim($app->request->post('password', ''));
+                $phone = trim($app->request->post('phone', ''));
+                $password_conf = trim($app->request->post('password_confirmation', ''));
 
+                if (
+                MemberController::updateMember(
+                    array(
+                        'user_id'       => $user_id,
+                        'password'      => $password,
+                        'password_conf' => $password_conf,
+                        'phone'         => $phone
+                    )
+                    , $app)
+                ) {
+                    $app->redirect($app->urlFor('profile_page'));
+                } else {
+                    $app->redirect($app->urlFor('profile_update_page'));
+                }
             });
         });
 
@@ -203,6 +262,39 @@ class MemberController {
         }
     }
 
+    private static function updateMember(
+        $data = array(),
+        \Slim\Slim $app)
+    {
+
+        if (!empty($data['password'])) {
+            if (
+                strcmp($data['password'], $data['password_conf']) != 0
+            ) {
+                $app->flash('error', 'Password Mismatch');
+                $app->redirect($app->urlFor('profile_update_page'));
+            }
+        }
+
+        $user = User::find('first', array('id' => $data['user_id']));
+
+        unset($data['user_id']);
+
+        if (!empty($user)) {
+            foreach ($data as $key => $arg) {
+                if (!empty($arg)) {
+                    $user->{$key} = $arg;
+                }
+            }
+            $user->save();
+
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+
     public static function FundingFailureHandler(\Slim\Slim $app,$user_id){
 
         $input = $app->request()->params('xmlmsg');
@@ -223,6 +315,15 @@ class MemberController {
         }else{
             $app->redirect($app->urlFor('home'));
         }
+    }
+
+    public static function user_id()
+    {
+        if (!isset($_SESSION[MemberController::$user_id_session])) {
+            return NULL;
+        }
+
+        return $_SESSION[MemberController::$user_id_session];
     }
 
 }

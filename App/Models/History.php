@@ -9,6 +9,11 @@
 class History extends ActiveRecord\Model {
 
     static $table_name = "history";
+
+    static $belongs_to = array(
+        array('wallet_app', 'merchant', 'user')
+    );
+
     /*
      * merchant_id,
      * $app_id,

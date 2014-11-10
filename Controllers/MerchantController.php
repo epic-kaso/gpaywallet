@@ -10,21 +10,39 @@ class MerchantController {
 
     public static $merchant_id_session = 'current_merchant_id';
 
-    public static function initializeMerchantRoutes(\Slim\Slim $app,$authenticateMerchant,$guestMerchant){
-        $app->group('/merchant',
-            function () use ($app,$authenticateMerchant,$guestMerchant) {
+    public static $isMerchantProfileComplete = array('MiddleWare', 'isMerchantProfileComplete');
 
-            $app->get('/',$authenticateMerchant,function() use($app){
+    public static function initializeMerchantRoutes(
+        \Slim\Slim $app, $authenticateMerchant, $guestMerchant)
+    {
+        $isMerchantProfileComplete = static::$isMerchantProfileComplete;
+
+        $app->group('/merchant',
+            function () use ($app, $authenticateMerchant, $guestMerchant, $isMerchantProfileComplete) {
+
+                $app->get('/', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
+                    $merchant_id = static::merchant_id();
+                    $merchant = Merchant::first($merchant_id);
+
+                    $history = History::find('all', array(
+                            'conditions' => array('merchant_id = ?', $merchant_id),
+                            'limit'      => '10')
+                    );
+
                 $app->render('Common/AuthHeader.php');
                 $app->render('Merchant/Account/Index.php',
                     array(
-                        'apps' => WalletApp::find('all',array('merchant_id'=>static::merchant_id())),
-                        'base_app_url' => '/api/v1/merchant/apps/'
-                    ));
+                        'apps'         => WalletApp::find('all',
+                            array('merchant_id' => $merchant_id)),
+                        'base_app_url' => '/api/v1/merchant/apps/',
+                        'history'      => $history,
+                        'merchant'     => $merchant
+                    )
+                );
                 $app->render('Common/Footer.php');
             })->name('merchant_home');
 
-            $app->group('/wallet',$authenticateMerchant, function () use ($app) {
+                $app->group('/wallet', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
 
                 $app->get('/balance', function () use ($app) {
 
@@ -52,7 +70,7 @@ class MerchantController {
 
             });
 
-            $app->get('/apps',$authenticateMerchant, function () use ($app) {
+                $app->get('/apps', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
                 $app->render('Common/AuthHeader.php');
                 $app->render('Merchant/Apps/Index.php',array(
                     'apps' => WalletApp::find('all',array('merchant_id'=>static::merchant_id())),
@@ -61,7 +79,7 @@ class MerchantController {
                 $app->render('Common/Footer.php');
             });
 
-            $app->get('/apps/api-doc',$authenticateMerchant,function() use($app){
+                $app->get('/apps/api-doc', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
                 $app->render('Common/AuthHeader.php');
 
                 $app->render('Merchant/Api/doc.php', array(
@@ -71,7 +89,7 @@ class MerchantController {
                 $app->render('Common/Footer.php');
             });
 
-            $app->get('/apps/generate-button',$authenticateMerchant,function() use($app){
+                $app->get('/apps/generate-button', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
                 $app->render('Common/AuthHeader.php');
 
                 $app->render('Merchant/Api/index.php', array(
@@ -81,7 +99,7 @@ class MerchantController {
                 $app->render('Common/Footer.php');
             });
 
-            $app->post('/apps/generate-button',$authenticateMerchant,function() use($app){
+                $app->post('/apps/generate-button', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
                 $response = ApiController::generateButton($app,'/api/v1/transaction');
 
                 $app->render('Common/AuthHeader.php');
@@ -89,13 +107,13 @@ class MerchantController {
                 $app->render('Common/Footer.php');
             });
 
-            $app->get('/apps/create',$authenticateMerchant, function () use ($app) {
+                $app->get('/apps/create', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
                 $app->render('Common/AuthHeader.php');
                 $app->render('Merchant/Apps/Create.php');
                 $app->render('Common/Footer.php');
             });
 
-            $app->post('/apps/create',$authenticateMerchant, function () use ($app) {
+                $app->post('/apps/create', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
                 $app_name = $app->request->post('app_name');
                 $app_url =  $app->request->post('app_url');
                 $app_description =  $app->request->post('app_description');
@@ -114,7 +132,7 @@ class MerchantController {
                 }
             });
 
-            $app->get('/apps/:id',$authenticateMerchant, function ($id) use ($app) {
+                $app->get('/apps/:id', $authenticateMerchant, $isMerchantProfileComplete, function ($id) use ($app) {
                 $wallet_app = WalletApp::first(array(
                     'hashcode' => $id
                 ));
@@ -128,7 +146,7 @@ class MerchantController {
                 }
             })->conditions(array('id' => '[a-zA-Z0-9]{8,16}'));
 
-            $app->post('/apps/:id',$authenticateMerchant, function ($id) use ($app) {
+                $app->post('/apps/:id', $authenticateMerchant, $isMerchantProfileComplete, function ($id) use ($app) {
 
             })->conditions(array('id' => '[a-zA-Z0-9]{8,16}'));
 
@@ -337,6 +355,14 @@ class MerchantController {
                 if(!empty($arg)){
                     $user->{$key} = $arg;
                 }
+            }
+
+            if (!empty($data['bank_name']) &&
+                !empty($data['bank_account_name']) &&
+                !empty($data['bank_account_name']) &&
+                !empty($data['bank_account_number'])
+            ) {
+                $user->is_profile_complete = TRUE;
             }
 
             $user->save();

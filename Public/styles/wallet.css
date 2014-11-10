@@ -14,7 +14,7 @@ img.tiny-logo{
 }
 
 .navbar-gpay{
-    background-color: #3276b1;
+    background-color: #4a4983;
     color: #ffffff;
     border: none;
 }
@@ -24,7 +24,7 @@ img.tiny-logo{
 }
 
 .navbar-gpay .nav > li > a:hover,.navbar-gpay .nav > li > a:focus{
-    background-color: #43bcf0;
+    background-color: #545294;
     text-decoration: none;
 }
 

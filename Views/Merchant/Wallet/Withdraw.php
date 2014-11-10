@@ -17,7 +17,16 @@
                     <h4>Fund Withdrawal Request.</h4>
                 </div>
                 <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Amount: </label>
+                            <input placeholder="AMOUNT" class="form-control" type="number" name="amount"/>
+                        </div>
 
+                        <div class="form-group">
+                            <input value="Submit" class="btn btn-primary" type="submit"/>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

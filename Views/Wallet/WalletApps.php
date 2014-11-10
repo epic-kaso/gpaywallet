@@ -13,18 +13,36 @@
                         <td>ID</td>
                         <td>Name</td>
                         <td>Active</td>
+                        <td>Created</td>
                         <td>..</td>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>1WEJK34ONU</td>
-                        <td>SUPERGEEKS STORE</td>
-                        <td><span class="label label-success">YES</span></td>
-                        <td><button class="btn btn-xs btn-default">change</button></td>
-                    </tr>
+
+                    <?php if (isset($walletapps) && !empty($walletapps)) {
+                        $index = 1;
+                        foreach ($walletapps as $h) {
+                            ?>
+                            <tr>
+                                <td><?= $index ?></td>
+                                <td><?= $h->token ?></td>
+                                <td><?= WalletApp::find_by_id($h->wallet_app_id)->name ?></td>
+                                <td><span class="label label-<?= $h->authorized == TRUE ? 'success' : 'warning' ?>">
+                                    <?= $h->authorized == TRUE ? 'Yes' : 'No' ?>
+                                </span>
+                                </td>
+                                <td><?= \Carbon\Carbon::createFromTimestamp($h->created_at->getTimestamp())->diffForHumans() ?></td>
+                                <td>
+                                    <form action="/api/v1/user/wallet/apps/modify/<?= $h->id ?>" method="post">
+                                        <input type="submit" class="btn btn-xs btn-default" value="change"/>
+                                    </form>
+                                </td>
+                            </tr>
+                            <?php
+                            $index++;
+                        }
+                    } ?>
                     </tbody>
                 </table>
             </div>
