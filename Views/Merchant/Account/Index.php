@@ -18,6 +18,10 @@
     <div class="row">
         <div class="col-sm-6">
             <ul class="list-group">
+                <li class="list-group-item list-group-item-success">
+                    <span>WALLET BALANCE</span>
+                    <span class="amount pull-right badge">N<?= $merchant->wallet ?></span>
+                </li>
                 <li class="list-group-item">
                     <h4>EARNINGS TODAY</h4>
                     <span>N</span><span class="amount">1000.00</span>

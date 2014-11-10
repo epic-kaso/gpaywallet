@@ -45,19 +45,32 @@ class MerchantController {
                 $app->group('/wallet', $authenticateMerchant, $isMerchantProfileComplete, function () use ($app) {
 
                 $app->get('/balance', function () use ($app) {
+                    $merchant_id = static::merchant_id();
+                    $merchant = Merchant::first($merchant_id);
+                    $history = History::find('all', array(
+                            'conditions' => array('merchant_id = ?', $merchant_id))
+                    );
 
                     $app->render('Common/AuthHeader.php');
-                    $app->render('Merchant/Wallet/Balance.php');
+                    $app->render('Merchant/Wallet/Balance.php',
+                        array(
+                            'merchant' => $merchant,
+                            'history'  => $history
+                        ));
                     $app->render('Common/Footer.php');
 
                 })->name('merchant_wallet_balance');
 
                 $app->get('/withdraw-funds', function () use ($app) {
+                    $merchant_id = static::merchant_id();
+                    $merchant = Merchant::first($merchant_id);
+
                     $app->render('Common/AuthHeader.php');
                     $app->render('Merchant/Wallet/Withdraw.php', array(
                         'image_url'   => '/Public/images/logo.png',
                         'success_url' => $app->urlFor('fund_success_url'),
-                        'failure_url' => $app->urlFor('fund_failure_url')
+                        'failure_url' => $app->urlFor('fund_failure_url'),
+                        'merchant'    => $merchant
                     ));
                     $app->render('Common/Footer.php');
                 });
