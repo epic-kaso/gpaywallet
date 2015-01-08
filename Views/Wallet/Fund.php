@@ -16,8 +16,8 @@
                         <input type="hidden" name="itemImageURL" value='<?= $image_url  ?>'/>
 <!--                        <input type="hidden" name="successURL" value="http://localhost:8000/api/v1/user/wallet/fund/success"/>-->
 <!--                        <input type="hidden" name="failURL" value="http://localhost:8000/api/v1/user/wallet/fund/failure"/>-->
-                        <input type="hidden" name="successURL" value="<?= 'http://localhost:8000'.$success_url ?>"/>
-                        <input type="hidden" name="failURL" value="<?= 'http://localhost:8000'.$failure_url ?>"/>
+                        <input type="hidden" name="successURL" value="<?= $success_url ?>"/>
+                        <input type="hidden" name="failURL" value="<?= $failure_url ?>"/>
                         <div class="form-group">
                             <label>Amount: </label>
                             <input type="number" min="1" name="itemPrice" placeholder="AMOUNT" class="form-control" />

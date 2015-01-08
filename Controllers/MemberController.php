@@ -41,13 +41,13 @@ class MemberController {
                 $app->get('/fund', function () use ($app) {
 
                     $return_url = $app->request->params('return_url');
-                    $success_url = empty($return_url) ? $app->urlFor('fund_success_url') : $return_url;
+                    $success_url = empty($return_url) ? 'http://' . $_SERVER['HTTP_HOST'] . $app->urlFor('fund_success_url') : $return_url;
 
                     $app->render('Common/Header.php');
                     $app->render('Wallet/Fund.php', array(
                         'image_url'   => '/Public/images/logo.png',
                         'success_url' => $success_url,
-                        'failure_url' => $app->urlFor('fund_failure_url')
+                        'failure_url' => 'http://' . $_SERVER['HTTP_HOST'] . $app->urlFor('fund_failure_url')
                     ));
                     $app->render('Common/Footer.php');
                 })->name('user_fund_wallet');
