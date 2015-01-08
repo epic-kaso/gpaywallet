@@ -11,10 +11,12 @@
             $username = DB::username;
             $password = DB::password;
             $db = DB::database;
+            $host = "localhost";
         }else{
             $username = DB_REMOTE::username;
             $password = DB_REMOTE::password;
             $db = DB_REMOTE::database;
+            $host = DB_REMOTE::host;
         }
 
 
@@ -23,13 +25,13 @@
         if(!empty($password)) {
             $cfg->set_connections(
                 array(
-                    'development' => "mysql://{$username}:{$password}@localhost/{$db}"
+                    'development' => "mysql://{$username}:{$password}@{$host}/{$db}"
                 )
             );
         }else{
             $cfg->set_connections(
                 array(
-                    'development' => "mysql://{$username}@localhost/{$db}"
+                    'development' => "mysql://{$username}@{$host}/{$db}"
                 )
             );
         }

@@ -11,4 +11,5 @@
         const password = 'yZ6hVWEYM6mGRgoyMj9L'; //WALLET
         const database = 'gpaywallet'; //gpayexpress_wallet
         const model_directory = 'App/Models';
+        const host = "104.236.83.239";
     }
