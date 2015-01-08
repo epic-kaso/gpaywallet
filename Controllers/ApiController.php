@@ -31,20 +31,22 @@
 
             $app->group('/transaction', function () use ($app) {
 
-                $app->post('/', function () use ($app) {
-                    $wallet_app_id = $app->request->post('wallet_app_id', NULL);
+                $app->any('/', function () use ($app) {
+                    $wallet_app_id = $app->request->params('wallet_app_id', NULL);
                     $domain = $app->request->getHost();
                     $reqUrl = $app->request->getUrl();
-                    $wallet_failure_url = $app->request->post('wallet_failure_url', NULL);
-                    $wallet_success_url = $app->request->post('wallet_success_url', NULL);
-                    $wallet_transaction_type = $app->request->post('wallet_transaction_type', 'debit');
-                    $wallet_transaction_name = $app->request->post('wallet_transaction_name', '');
-                    $wallet_transaction_amount = $app->request->post('wallet_transaction_amount', NULL);
-                    $wallet_user_token = $app->request->post('wallet_user_token', NULL);
-                    $wallet_user_email = $app->request->post('wallet_user_token', NULL);
+                    $wallet_failure_url = $app->request->params('wallet_failure_url', NULL);
+                    $wallet_success_url = $app->request->params('wallet_success_url', NULL);
+                    $wallet_transaction_type = $app->request->params('wallet_transaction_type', 'debit');
+                    $wallet_transaction_name = $app->request->params('wallet_transaction_name', '');
+                    $wallet_transaction_amount = $app->request->params('wallet_transaction_amount', NULL);
+                    $wallet_user_token = $app->request->params('wallet_user_token', NULL);
+                    $wallet_user_email = $app->request->params('wallet_user_token', NULL);
 
                     // First validate App ID && validate App domain
                     $response = WalletApp::isValidAppId($wallet_app_id, $domain);
+
+                    //When We have An Invalid Wallet ID supplied, Show Error Page
                     if (!$response) {
                         $params = http_build_query([
                             'error' => urlencode('Invalid Request. Bad App Id or UnAuthorized Domain')
@@ -59,27 +61,31 @@
                             }
                         }
                     }
+
+                    //Do We have a User token Supplied? then Validate and Use
                     // Validate User token
                     $user_wallet = UserWalletApp::isValidToken($wallet_user_token);
 
+                    //If No/Invalid User Token, Show User Login Page
                     if (empty($user_wallet)) {
                         static::showUserLoginPage($app);
+                    } else {
+                        static::handleTransaction($app,
+                            $wallet_app_id,
+                            $user_wallet->user->id,
+                            $wallet_success_url,
+                            $wallet_failure_url,
+                            $wallet_transaction_amount,
+                            $wallet_transaction_type);
                     }
 
-                    static::handleTransaction($app,
-                        $wallet_app_id,
-                        $user_wallet->user->id,
-                        $wallet_success_url,
-                        $wallet_failure_url,
-                        $wallet_transaction_amount,
-                        $wallet_transaction_type);
 
                     //Make a Transaction Session
                     //Login Consumer User
                     //Perform Transaction
                     //call Redirect URL
 
-                });
+                })->name('transaction');
 
 
                 $app->get('/:id', function ($id) use ($app) {
@@ -112,27 +118,26 @@
                 })->name('user_auth')->conditions(array('id' => '[a-zA-Z0-9]{8,16}'));
 
                 $app->post('/auth', function () use ($app) {
+
                     $email = trim($app->request->post('email', ''));
                     $password = trim($app->request->post('password', ''));
                     $wallet_app_id = $app->request->params('wallet_app_id', NULL);
-                    $wallet_app_id = $app->request->params('wallet_app_id', NULL);
                     $domain = $app->request->getHost();
                     $reqUrl = $app->request->getUrl();
-                    $wallet_failure_url = $app->request->params('wallet_failure_url', NULL);
-                    $wallet_success_url = $app->request->params('wallet_success_url', NULL);
+                    $wallet_failure_url = $app->request->params('wallet_failure_url', $app->request->getHost());
+                    $wallet_success_url = $app->request->params('wallet_success_url', $app->request->getHost());
                     $wallet_transaction_type = $app->request->params('wallet_transaction_type', 'debit');
                     $wallet_transaction_name = $app->request->params('wallet_transaction_name', '');
                     $wallet_transaction_amount = $app->request->params('wallet_transaction_amount', NULL);
-                    $wallet_user_token = $app->request->params('wallet_user_token', NULL);
-                    $wallet_user_email = $app->request->params('wallet_user_token', NULL);
 
-                    list($token, $user) = static::loginUser($email, $password, $wallet_app_id);
-                    if (!$token) {
+                    $data = static::loginUser($email, $password, $wallet_app_id);
+
+                    if (!$data['token']) {
                         $app->redirect($app->request->getUrl());
                     } else {
                         static::handleTransaction($app,
                             $wallet_app_id,
-                            $user->id,
+                            $data['user']->id,
                             $wallet_success_url,
                             $wallet_failure_url,
                             $wallet_transaction_amount,
@@ -180,6 +185,15 @@
             $app->redirect($app->urlFor('user_auth') . '?' . $q);
         }
 
+        private static function showUserFundWalletPage(\Slim\Slim $app, $user_id)
+        {
+            $_SESSION[MemberController::$user_id_session] = $user_id;
+            $params = $app->request->params();
+            $q = http_build_query($params);
+            $params['return_url'] = $app->urlFor('transaction') . '?' . $q;
+            $app->redirect($app->urlFor('user_fund_wallet') . '?' . $q);
+        }
+
         private static function loginUser($email, $password, $wallet_app_hashcode)
         {
             $user = User::find('first', array('email' => $email, 'password' => md5($password)));
@@ -209,7 +223,7 @@
                     $app->save();
                 }
 
-                return array($app->token, $user);
+                return array('token' => $app->token, 'user' => $user);
             }
         }
 
@@ -221,12 +235,19 @@
             $wallet_failure_url,
             $wallet_transaction_amount,
             $wallet_transaction_type){
-            $response = TransactionController::executeTransaction(
-                                                            $wallet_app_id,
-                                                            $user_id,
-                                                            $wallet_transaction_amount,
-                                                            $wallet_transaction_type);
 
+            print_r('In handle');
+            //Perform The Transaction
+            $response =
+                TransactionController::executeTransaction(
+                    $wallet_app_id,
+                    $user_id,
+                    $wallet_transaction_amount,
+                    $wallet_transaction_type
+                );
+
+
+            //Know the type of response we got
             switch ($response) {
                 case TransactionController::SUCCESS:
                     $app->redirect($wallet_success_url);
@@ -235,7 +256,7 @@
                     $app->redirect($wallet_failure_url);
                     break;
                 case TransactionController::ERROR_INVALID_USER_WALLET_BALANCE:
-                    $app->redirect($wallet_failure_url);
+                    static::showUserFundWalletPage($app, $user_id);
                     break;
                 default:
                     $app->redirect($wallet_failure_url);

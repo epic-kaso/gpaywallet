@@ -39,14 +39,18 @@ class MemberController {
                 })->name('wallet_balance');
 
                 $app->get('/fund', function () use ($app) {
+
+                    $return_url = $app->request->params('return_url');
+                    $success_url = empty($return_url) ? $app->urlFor('fund_success_url') : $return_url;
+
                     $app->render('Common/Header.php');
                     $app->render('Wallet/Fund.php', array(
                         'image_url'   => '/Public/images/logo.png',
-                        'success_url' => $app->urlFor('fund_success_url'),
+                        'success_url' => $success_url,
                         'failure_url' => $app->urlFor('fund_failure_url')
                     ));
                     $app->render('Common/Footer.php');
-                });
+                })->name('user_fund_wallet');
 
                 $app->any('/fund/success', function () use ($app) {
                     $user_id = MiddleWare::user_id();

@@ -52,7 +52,7 @@
             <div class="list-group">
                 <a  href="/api/v1/merchant/apps" class="list-group-item">All Apps</a>
                 <a  href="/api/v1/merchant/apps/create" class="list-group-item">Create App</a>
-            </div>z
+            </div>
         </div>
     </div>
 </div>

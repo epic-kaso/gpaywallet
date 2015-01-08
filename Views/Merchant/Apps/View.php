@@ -14,30 +14,22 @@
            <div class="panel">
                <div class="panel-heading">
                    <h3><?= $app->name ?></h3>
-                   <p><?= $app->app_url ?></p>
+
+                   <p><a href="<?= $app->app_url ?>"><?= $app->app_url ?></a></p>
                </div>
                <table class="table">
                    <tr>
-                       <td>Users Count: </td>
-                       <td>0</td>
+                       <td>Total Users:</td>
+                       <td><?= $users ?></td>
                    </tr>
                    <tr>
-                       <td>Transactions Today: </td>
-                       <td>0</td>
+                       <td>Total Transactions:</td>
+                       <td><?= $transactions ?></td>
                    </tr>
                    <tr>
-                       <td>Transactions All Time: </td>
+                       <td>Total Earnings:</td>
                        <td>0</td>
                    </tr>
-                   <tr>
-                       <td>Earning Today: </td>
-                       <td>0</td>
-                   </tr>
-                   <tr>
-                       <td>Earnings All Time: </td>
-                       <td>0</td>
-                   </tr>
-
                </table>
            </div>
        </div>

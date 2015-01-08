@@ -8,7 +8,7 @@
 
     class DB_REMOTE{
         const username = 'forge'; //gpaye_wallet
-        const password = 'iJKFRcicWDtQ1ZuEtjsl'; //WALLET
+        const password = 'yZ6hVWEYM6mGRgoyMj9L'; //WALLET
         const database = 'gpaywallet'; //gpayexpress_wallet
         const model_directory = 'App/Models';
     }

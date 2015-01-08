@@ -8,7 +8,7 @@
                 border: #f2f2f2 solid 1px;
             ">
                 <div class="panel-body">
-                    <h4>Wallet Balance:  <strong class="pull-right">N 0.00</strong></h4>
+                    <h4>Wallet Balance: <strong class="pull-right">N <?= $merchant->wallet ?></strong></h4>
                 </div>
             </div>
 
@@ -20,53 +20,53 @@
                     <thead>
                     <tr>
                         <td>S/N</td>
-                        <td>Application</td>
                         <td>Transaction type</td>
+                        <td>Transaction Status</td>
                         <td>Amount (N)</td>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Supergeeks Nigeria</td>
-                        <td><span class="label label-warning">DEBIT</span></td>
-                        <td>100</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Supergeeks Nigeria</td>
-                        <td><span class="label label-warning">DEBIT</span></td>
-                        <td>100</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Supergeeks Nigeria</td>
-                        <td><span class="label label-warning">DEBIT</span></td>
-                        <td>100</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Supergeeks Nigeria</td>
-                        <td><span class="label label-warning">DEBIT</span></td>
-                        <td>100</td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Supergeeks Nigeria</td>
-                        <td><span class="label label-warning">DEBIT</span></td>
-                        <td>100</td>
-                    </tr>
+
+                    <?php if (isset($history) && !empty($history)) {
+                        $index = 1;
+                        foreach ($history as $h) {
+                            ?>
+                            <tr>
+                                <td><?= $index ?></td>
+                                <td><span
+                                        class="label label-<?= $h->transaction_type == 'credit' ? 'success' : 'warning' ?>">
+                                    <?= $h->transaction_type ?>
+                                </span>
+                                </td>
+                                <td><?= $h->transaction_status ?></td>
+                                <td><?= $h->transaction_amount ?></td>
+                                <td><?= \Carbon\Carbon::createFromTimestamp($h->created_at->getTimestamp())->diffForHumans() ?></td>
+                            </tr>
+                            <?php
+                            $index++;
+                        }
+                    } else { ?>
+                        <tr>
+                            <td class="text-center" colspan="5">
+                                <p>You currently have no transaction History</p>
+                            </td>
+                        </tr>
+                    <?php } ?>
                     </tbody>
                 </table>
             </div>
 
+            <?php if (isset($history) && !empty($history)) { ?>
             <div>
                 <ul class="pagination">
                     <li><a href="#">< PREVIOUS</a></li>
                     <li><a href="#">NEXT ></a></li>
                 </ul>
             </div>
+            <?php
+            }
+            ?>
         </div>
 
         <div class="col-sm-4 login-box">

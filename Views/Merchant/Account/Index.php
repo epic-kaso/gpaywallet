@@ -16,32 +16,18 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <ul class="list-group">
                 <li class="list-group-item list-group-item-success">
                     <span>WALLET BALANCE</span>
                     <span class="amount pull-right badge">N<?= $merchant->wallet ?></span>
                 </li>
-                <li class="list-group-item">
-                    <h4>EARNINGS TODAY</h4>
-                    <span>N</span><span class="amount">1000.00</span>
-                </li>
-
-                <li class="list-group-item">
-                    <h4>EARNINGS WEEK</h4>
-                    <span>N</span><span class="amount">1000.00</span>
-                </li>
-
-                <li class="list-group-item">
-                    <h4>EARNINGS MONTH</h4>
-                    <span>N</span><span class="amount">1000.00</span>
-                </li>
             </ul>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3>Wallet Apps</h3>
+                    <h4>Wallet Apps</h4>
                 </div>
                 <?php if(isset($apps) && !empty($apps)){?>
 
@@ -74,7 +60,8 @@
                             <tr>
                                 <td class="text-center" colspan="5">
                                     <p>You currently have no wallet apps</p>
-                                    <a href="/merchant/apps/create" class="btn btn-info btn-lg">Create Wallet App</a>
+                                    <a href="/api/v1/merchant/apps/create" class="btn btn-info btn-lg">Create Wallet
+                                        App</a>
                                 </td>
                             </tr>
                         </tbody>

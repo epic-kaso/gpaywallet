@@ -46,7 +46,13 @@
                             <?php
                             $index++;
                         }
-                    } ?>
+                    } else { ?>
+                        <tr>
+                            <td class="text-center" colspan="5">
+                                <p>You currently have no transaction History</p>
+                            </td>
+                        </tr>
+                    <?php } ?>
                     </tbody>
                 </table>
             </div>

@@ -76,8 +76,18 @@ class MerchantController {
                 });
 
                 $app->get('/history', function () use ($app) {
+                    $merchant_id = static::merchant_id();
+                    $merchant = Merchant::first($merchant_id);
+                    $history = History::find('all', array(
+                            'conditions' => array('merchant_id = ?', $merchant_id))
+                    );
+
                     $app->render('Common/AuthHeader.php');
-                    $app->render('Merchant/Wallet/History.php');
+                    $app->render('Merchant/Wallet/History.php',
+                        array(
+                            'merchant' => $merchant,
+                            'history'  => $history
+                        ));
                     $app->render('Common/Footer.php');
                 });
 
@@ -146,15 +156,24 @@ class MerchantController {
             });
 
                 $app->get('/apps/:id', $authenticateMerchant, $isMerchantProfileComplete, function ($id) use ($app) {
+
                 $wallet_app = WalletApp::first(array(
                     'hashcode' => $id
                 ));
 
+                    $merchant_id = static::merchant_id();
+                    $merchant = Merchant::first($merchant_id);
+
                 if(!$wallet_app){
                     echo 'invalid app id';
                 }else{
+                    $data = array();
+                    $data['app'] = $wallet_app;
+                    $data['users'] = UserWalletApp::count(array('conditions' => array('wallet_app_id = ?', $wallet_app->id)));
+                    $data['transactions'] = History::count(array('conditions' => array('app_id = ?', $wallet_app->id)));
+
                     $app->render('Common/AuthHeader.php');
-                    $app->render('Merchant/Apps/View.php',array('app'=>$wallet_app));
+                    $app->render('Merchant/Apps/View.php', $data);
                     $app->render('Common/Footer.php');
                 }
             })->conditions(array('id' => '[a-zA-Z0-9]{8,16}'));
