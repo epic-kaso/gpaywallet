@@ -316,6 +316,7 @@ class MemberController {
                 'transaction_status' => $array['OrderStatus'],
                 'meta_data'          => $input
             ];
+            $app->redirect($app->urlFor('user_fund_wallet'));
         }else{
             $app->redirect($app->urlFor('home'));
         }
