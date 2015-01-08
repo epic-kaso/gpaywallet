@@ -8,7 +8,7 @@
             <li><a href="/api/v1/user/wallet/balance">WALLET BALANCE</a></li>
             <li><a href="/api/v1/user/wallet/history">TRANSACTION HISTORY</a></li>
             <li><a href="/api/v1/user/wallet/fund">FUND WALLET</a></li>
-            <li><a href="/api/v1/user/wallet/apps">APPS</a></li>
+            <li><a href="/api/v1/user/wallet/apps">MERCHANTS</a></li>
         </ul>
 
 
