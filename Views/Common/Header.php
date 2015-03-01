@@ -2,7 +2,7 @@
 <div class="navbar navbar-gpay navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <img src="/Public/images/logo.png" class="navbar-brand" />
+            <img src="/Public/images/wowllet.png" class="navbar-brand" />
         </div>
         <ul class="nav navbar-nav">
             <li><a href="/api/v1/user/wallet/balance">WALLET BALANCE</a></li>

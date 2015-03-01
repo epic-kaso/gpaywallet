@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-4 col-sm-offset-4 login-box">
-            <img src="/Public/images/logo.png" class="img-rounded img-responsive tiny-logo text-center" />
+            <img src="/Public/images/wowllet.png" class="img-rounded img-responsive tiny-logo text-center" />
             <h4 class="text-center">GPay Wallet User Login</h4>
 
             <form method="post">
