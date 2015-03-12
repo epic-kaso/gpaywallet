@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-4 col-sm-offset-4 login-box">
             <img src="/Public/images/logo.png" class="img-rounded img-responsive tiny-logo text-center" />
-            <h4>Merchant Login to GPay Wallet Account</h4>
+            <h4>Merchant Login</h4>
 
             <form method="post">
                 <div class="form-group">

@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-4 col-sm-offset-4 login-box">
             <img src="/Public/images/wowllet.png" class="img-rounded img-responsive tiny-logo text-center" />
-            <h4>Login to GPay Wallet Account</h4>
+            <h4>Create a  WoWllet Account</h4>
 
             <form action="/api/v1/user/register" method="post">
 

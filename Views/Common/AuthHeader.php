@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>
-        GPAY WALLET
+        Wowllet
     </title>
     <link href="/Public/styles/bootstrap.min.css" rel="stylesheet">
     <link href="/Public/styles/wallet.css" rel="stylesheet">
